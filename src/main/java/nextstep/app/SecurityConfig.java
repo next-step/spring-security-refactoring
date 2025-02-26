@@ -5,22 +5,20 @@ import nextstep.oauth2.authentication.OAuth2LoginAuthenticationProvider;
 import nextstep.oauth2.registration.ClientRegistration;
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.oauth2.userinfo.OAuth2UserService;
-import nextstep.oauth2.web.OAuth2AuthorizationRequestRedirectFilter;
-import nextstep.oauth2.web.OAuth2AuthorizedClientRepository;
-import nextstep.oauth2.web.OAuth2LoginAuthenticationFilter;
+import nextstep.security.EnableWebSecurity;
+import nextstep.security.HttpSecurity;
 import nextstep.security.access.AnyRequestMatcher;
 import nextstep.security.access.MvcRequestMatcher;
 import nextstep.security.access.RequestMatcherEntry;
 import nextstep.security.access.hierarchicalroles.RoleHierarchy;
 import nextstep.security.access.hierarchicalroles.RoleHierarchyImpl;
-import nextstep.security.authentication.*;
+import nextstep.security.authentication.AuthenticationManager;
+import nextstep.security.authentication.DaoAuthenticationProvider;
+import nextstep.security.authentication.ProviderManager;
 import nextstep.security.authorization.*;
-import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.SecurityFilterChain;
-import nextstep.security.context.SecurityContextHolderFilter;
-import nextstep.security.csrf.CsrfFilter;
 import nextstep.security.userdetails.UserDetailsService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +35,7 @@ import java.util.Map;
 @Configuration
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
@@ -50,8 +49,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DelegatingFilterProxy delegatingFilterProxy() {
-        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain())));
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+        return http
+                .csrf(csrf -> csrf.ignoringRequestMatcher("/login"))
+                .build();
+    }
+
+    @Bean
+    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity http) {
+        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain(http))));
     }
 
     @Bean
@@ -78,20 +84,20 @@ public class SecurityConfig {
                 new OAuth2LoginAuthenticationProvider(oAuth2UserService)));
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain() {
-        return new DefaultSecurityFilterChain(
-                List.of(
-                        new SecurityContextHolderFilter(),
-                        new UsernamePasswordAuthenticationFilter(authenticationManager()),
-                        new BasicAuthenticationFilter(authenticationManager()),
-                        new OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository()),
-                        new OAuth2LoginAuthenticationFilter(clientRegistrationRepository(), new OAuth2AuthorizedClientRepository(), authenticationManager()),
-                        new AuthorizationFilter(requestAuthorizationManager()),
-                        new CsrfFilter()
-                )
-        );
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain() {
+//        return new DefaultSecurityFilterChain(
+//                List.of(
+//                        new CsrfFilter(Set.of(new MvcRequestMatcher(HttpMethod.POST, "/login"))),
+//                        new SecurityContextHolderFilter(),
+//                        new UsernamePasswordAuthenticationFilter(authenticationManager()),
+//                        new BasicAuthenticationFilter(authenticationManager()),
+//                        new OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository()),
+//                        new OAuth2LoginAuthenticationFilter(clientRegistrationRepository(), new OAuth2AuthorizedClientRepository(), authenticationManager()),
+//                        new AuthorizationFilter(requestAuthorizationManager())
+//                )
+//        );
+//    }
 
     @Bean
     public RequestMatcherDelegatingAuthorizationManager requestAuthorizationManager() {
