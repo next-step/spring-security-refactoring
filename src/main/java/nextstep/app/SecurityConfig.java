@@ -20,6 +20,7 @@ import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.SecurityFilterChain;
 import nextstep.security.context.SecurityContextHolderFilter;
+import nextstep.security.csrf.CsrfFilter;
 import nextstep.security.userdetails.UserDetailsService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -86,7 +87,8 @@ public class SecurityConfig {
                         new BasicAuthenticationFilter(authenticationManager()),
                         new OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository()),
                         new OAuth2LoginAuthenticationFilter(clientRegistrationRepository(), new OAuth2AuthorizedClientRepository(), authenticationManager()),
-                        new AuthorizationFilter(requestAuthorizationManager())
+                        new AuthorizationFilter(requestAuthorizationManager()),
+                        new CsrfFilter()
                 )
         );
     }
