@@ -34,6 +34,7 @@ class SecuredTest {
 
     @BeforeEach
     void setUp() {
+        memberRepository.deleteAll();
         memberRepository.save(TEST_ADMIN_MEMBER);
         memberRepository.save(TEST_USER_MEMBER);
     }

@@ -25,11 +25,11 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
     private static final AuthenticationSuccessHandler successHandler = (request, response, authentication) -> response.sendRedirect("/");
     private static final AuthenticationFailureHandler failureHandler = (request, response, exception) -> response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
 
-    protected AbstractAuthenticationProcessingFilter(String filterProcessesUrl, AuthenticationManager authenticationManager) {
-        this(request -> {
+    protected AbstractAuthenticationProcessingFilter(String filterProcessesUrl) {
+        this.requiresAuthenticationRequestMatcher = request -> {
             String uri = request.getRequestURI();
             return uri.startsWith(filterProcessesUrl);
-        }, authenticationManager);
+        };
     }
 
     protected AbstractAuthenticationProcessingFilter(RequestMatcher requiresAuthenticationRequestMatcher, AuthenticationManager authenticationManager) {
@@ -44,7 +44,7 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        if (!requiresAuthentication(request, response)) {
+        if (!requiresAuthentication(request)) {
             chain.doFilter(request, response);
             return;
         }
@@ -66,16 +66,16 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
         SecurityContextHolder.setContext(context);
         this.securityContextRepository.saveContext(context, request, response);
 
-        this.successHandler.onAuthenticationSuccess(request, response, authResult);
+        successHandler.onAuthenticationSuccess(request, response, authResult);
     }
 
     private void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         SecurityContextHolder.clearContext();
 
-        this.failureHandler.onAuthenticationFailure(request, response, failed);
+        failureHandler.onAuthenticationFailure(request, response, failed);
     }
 
-    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+    protected boolean requiresAuthentication(HttpServletRequest request) {
         return this.requiresAuthenticationRequestMatcher.matches(request);
     }
 
@@ -84,5 +84,9 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
 
     protected AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
+    }
+
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 }

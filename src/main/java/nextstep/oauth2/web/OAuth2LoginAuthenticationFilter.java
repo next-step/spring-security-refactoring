@@ -14,7 +14,6 @@ import nextstep.oauth2.registration.ClientRegistration;
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.security.authentication.AbstractAuthenticationProcessingFilter;
 import nextstep.security.authentication.Authentication;
-import nextstep.security.authentication.AuthenticationManager;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
@@ -31,8 +30,8 @@ public class OAuth2LoginAuthenticationFilter extends AbstractAuthenticationProce
 
     private final Converter<OAuth2LoginAuthenticationToken, OAuth2AuthenticationToken> authenticationResultConverter = this::createAuthenticationResult;
 
-    public OAuth2LoginAuthenticationFilter(ClientRegistrationRepository clientRegistrationRepository, OAuth2AuthorizedClientRepository authorizedClientRepository, AuthenticationManager authenticationManager) {
-        super(DEFAULT_LOGIN_REQUEST_BASE_URI, authenticationManager);
+    public OAuth2LoginAuthenticationFilter(ClientRegistrationRepository clientRegistrationRepository, OAuth2AuthorizedClientRepository authorizedClientRepository) {
+        super(DEFAULT_LOGIN_REQUEST_BASE_URI);
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.authorizedClientRepository = authorizedClientRepository;
     }
