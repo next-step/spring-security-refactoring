@@ -1,8 +1,8 @@
-package nextstep.security.configurer;
+package nextstep.security.config.annotation.configurer;
 
-import nextstep.security.HttpSecurity;
 import nextstep.security.access.MvcRequestMatcher;
 import nextstep.security.access.RequestMatcher;
+import nextstep.security.config.annotation.HttpSecurity;
 import nextstep.security.csrf.CsrfFilter;
 
 import java.util.HashSet;
@@ -23,9 +23,11 @@ public class CsrfConfigurer implements SecurityConfigurer {
         http.addFilter(csrfFilter);
     }
 
-    public CsrfConfigurer ignoringRequestMatcher(String pattern) {
-        MvcRequestMatcher mvc = new MvcRequestMatcher(null, pattern);
-        ignoredCsrfProtectionMatchers.add(mvc);
+    public CsrfConfigurer ignoringRequestMatchers(String... patterns) {
+        for (String p : patterns) {
+            MvcRequestMatcher mvc = new MvcRequestMatcher(null, p);
+            ignoredCsrfProtectionMatchers.add(mvc);
+        }
         return this;
     }
 }

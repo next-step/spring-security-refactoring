@@ -1,4 +1,4 @@
-package nextstep.security.configurer;
+package nextstep.security.config.annotation.configurer;
 
 @FunctionalInterface
 public interface Customizer<T> {

@@ -1,6 +1,6 @@
-package nextstep.security.configurer;
+package nextstep.security.config.annotation.configurer;
 
-import nextstep.security.HttpSecurity;
+import nextstep.security.config.annotation.HttpSecurity;
 
 public interface SecurityConfigurer {
     void init(HttpSecurity http);
