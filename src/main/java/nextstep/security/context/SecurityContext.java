@@ -14,11 +14,11 @@ public class SecurityContext implements Serializable {
         this.authentication = authentication;
     }
 
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-    }
-
     public Authentication getAuthentication() {
         return authentication;
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
     }
 }

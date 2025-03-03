@@ -2,7 +2,14 @@ package nextstep.security.access.hierarchicalroles;
 
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class RoleHierarchyImpl implements RoleHierarchy {
     private Map<String, Set<String>> rolesReachableInOneOrMoreStepsMap = null;
@@ -13,6 +20,29 @@ public class RoleHierarchyImpl implements RoleHierarchy {
 
     public static Builder with() {
         return new Builder();
+    }
+
+    private static Map<String, Set<String>> buildRolesReachableInOneOrMoreStepsMap(
+            Map<String, Set<String>> hierarchy) {
+        Map<String, Set<String>> rolesReachableInOneOrMoreStepsMap = new HashMap<>();
+        // iterate over all higher roles from rolesReachableInOneStepMap
+        for (String roleName : hierarchy.keySet()) {
+            Set<String> rolesToVisitSet = new HashSet<>(hierarchy.get(roleName));
+            Set<String> visitedRolesSet = new HashSet<>();
+            while (!rolesToVisitSet.isEmpty()) {
+                // take a role from the rolesToVisit set
+                String lowerRole = rolesToVisitSet.iterator().next();
+                rolesToVisitSet.remove(lowerRole);
+                if (!visitedRolesSet.add(lowerRole) || !hierarchy.containsKey(lowerRole)) {
+                    continue; // Already visited role or role with missing hierarchy
+                } else if (roleName.equals(lowerRole)) {
+                    throw new RuntimeException();
+                }
+                rolesToVisitSet.addAll(hierarchy.get(lowerRole));
+            }
+            rolesReachableInOneOrMoreStepsMap.put(roleName, visitedRolesSet);
+        }
+        return rolesReachableInOneOrMoreStepsMap;
     }
 
     @Override
@@ -46,29 +76,6 @@ public class RoleHierarchyImpl implements RoleHierarchy {
             }
         }
         return new ArrayList<>(reachableRoles);
-    }
-
-    private static Map<String, Set<String>> buildRolesReachableInOneOrMoreStepsMap(
-            Map<String, Set<String>> hierarchy) {
-        Map<String, Set<String>> rolesReachableInOneOrMoreStepsMap = new HashMap<>();
-        // iterate over all higher roles from rolesReachableInOneStepMap
-        for (String roleName : hierarchy.keySet()) {
-            Set<String> rolesToVisitSet = new HashSet<>(hierarchy.get(roleName));
-            Set<String> visitedRolesSet = new HashSet<>();
-            while (!rolesToVisitSet.isEmpty()) {
-                // take a role from the rolesToVisit set
-                String lowerRole = rolesToVisitSet.iterator().next();
-                rolesToVisitSet.remove(lowerRole);
-                if (!visitedRolesSet.add(lowerRole) || !hierarchy.containsKey(lowerRole)) {
-                    continue; // Already visited role or role with missing hierarchy
-                } else if (roleName.equals(lowerRole)) {
-                    throw new RuntimeException();
-                }
-                rolesToVisitSet.addAll(hierarchy.get(lowerRole));
-            }
-            rolesReachableInOneOrMoreStepsMap.put(roleName, visitedRolesSet);
-        }
-        return rolesReachableInOneOrMoreStepsMap;
     }
 
     public static final class Builder {

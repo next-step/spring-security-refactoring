@@ -8,8 +8,8 @@ import nextstep.security.authentication.AuthenticationException;
 import java.util.Collection;
 
 public class AuthorityAuthorizationManager<T> implements AuthorizationManager<T> {
-    private RoleHierarchy roleHierarchy = new NullRoleHierarchy();
     private final String authority;
+    private RoleHierarchy roleHierarchy = new NullRoleHierarchy();
 
     public AuthorityAuthorizationManager(RoleHierarchy roleHierarchy, String authority) {
         this.roleHierarchy = roleHierarchy;

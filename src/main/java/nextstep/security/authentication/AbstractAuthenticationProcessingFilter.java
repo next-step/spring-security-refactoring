@@ -16,14 +16,11 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 public abstract class AbstractAuthenticationProcessingFilter extends GenericFilterBean {
-    private AuthenticationManager authenticationManager;
-
-    private final RequestMatcher requiresAuthenticationRequestMatcher;
-
-    private final SecurityContextRepository securityContextRepository = new SecurityContextRepository();
-
     private static final AuthenticationSuccessHandler successHandler = (request, response, authentication) -> response.sendRedirect("/");
     private static final AuthenticationFailureHandler failureHandler = (request, response, exception) -> response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+    private final RequestMatcher requiresAuthenticationRequestMatcher;
+    private final SecurityContextRepository securityContextRepository = new SecurityContextRepository();
+    private AuthenticationManager authenticationManager;
 
     protected AbstractAuthenticationProcessingFilter(String filterProcessesUrl, AuthenticationManager authenticationManager) {
         this(request -> {
