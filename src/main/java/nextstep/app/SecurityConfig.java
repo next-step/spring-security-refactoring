@@ -20,6 +20,8 @@ import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.SecurityFilterChain;
 import nextstep.security.context.SecurityContextHolderFilter;
+import nextstep.security.httpsecurity.EnableWebSecurity;
+import nextstep.security.httpsecurity.HttpSecurity;
 import nextstep.security.userdetails.UserDetailsService;
 import nextstep.security.web.csrf.CsrfFilter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,6 +36,7 @@ import java.util.*;
 @Configuration
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
@@ -88,6 +91,12 @@ public class SecurityConfig {
                         new AuthorizationFilter(requestAuthorizationManager())
                 )
         );
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+        return http
+                .build();
     }
 
     @Bean
