@@ -18,6 +18,7 @@ import nextstep.security.authorization.*;
 import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
+import nextstep.security.config.HttpSecurity;
 import nextstep.security.config.SecurityFilterChain;
 import nextstep.security.context.SecurityContextHolderFilter;
 import nextstep.security.userdetails.UserDetailsService;
@@ -115,6 +116,12 @@ public class SecurityConfig {
     private static ClientRegistration getClientRegistration(String registrationId,
                                                             OAuth2ClientProperties.Registration registration, OAuth2ClientProperties.Provider provider) {
         return new ClientRegistration(registrationId, registration.getClientId(), registration.getClientSecret(), registration.getRedirectUri(), registration.getScope(), provider.getAuthorizationUri(), provider.getTokenUri(), provider.getUserInfoUri(), provider.getUserNameAttributeName());
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain2(HttpSecurity http) {
+        return http
+                .build();
     }
 }
 
