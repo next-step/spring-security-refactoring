@@ -14,6 +14,7 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.authentication.DaoAuthenticationProvider;
 import nextstep.security.authentication.ProviderManager;
 import nextstep.security.authorization.*;
+import nextstep.security.config.Customizer;
 import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.SecurityFilterChain;
@@ -49,8 +50,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DelegatingFilterProxy delegatingFilterProxy() {
-        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(new HttpSecurity()))));
+    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity http) {
+        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(http))));
     }
 
     @Bean
@@ -96,6 +97,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain2(HttpSecurity http) {
         return http
                 .csrf(c -> c.ignoringRequestMatchers("/login"))
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
