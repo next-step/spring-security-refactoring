@@ -92,7 +92,8 @@ public class HttpSecurity {
         return HttpSecurity.this;
     }
 
-    public HttpSecurity authorizeHttpRequests() {
+    public HttpSecurity authorizeHttpRequests(Customizer<AuthorizeHttpRequestsConfigurer> authorizeConfigurer) {
+        authorizeConfigurer.customize(getOrApply(new AuthorizeHttpRequestsConfigurer()));
         return HttpSecurity.this;
     }
 
