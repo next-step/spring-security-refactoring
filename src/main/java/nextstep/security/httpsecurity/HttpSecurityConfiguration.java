@@ -1,6 +1,5 @@
 package nextstep.security.httpsecurity;
 
-import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.Customizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +22,9 @@ public class HttpSecurityConfiguration {
 
     @Bean(HTTPSECURITY_BEAN_NAME)
     @Scope("prototype")
-    HttpSecurity httpSecurity(AuthenticationManager authenticationManager) {
-        return new HttpSecurity(authenticationManager, createSharedObjects())
+    HttpSecurity httpSecurity() {
+        AuthenticationManagerBuilder authenticationBuilder = new AuthenticationManagerBuilder(context);
+        return new HttpSecurity(authenticationBuilder, createSharedObjects())
                 .securityContext(Customizer.withDefaults());
     }
 
