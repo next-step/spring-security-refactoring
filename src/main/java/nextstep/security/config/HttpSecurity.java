@@ -30,7 +30,7 @@ public class HttpSecurity {
         }
     }
 
-    public HttpSecurity csrf(Customizer<SecurityConfigurer> csrfCustomizer) {
+    public HttpSecurity csrf(Customizer<CsrfConfigurer> csrfCustomizer) {
         csrfCustomizer.customize(getOrApply(new CsrfConfigurer()));
         return HttpSecurity.this;
     }
@@ -39,10 +39,10 @@ public class HttpSecurity {
         this.filters.add(filter);
     }
 
-    private SecurityConfigurer getOrApply(SecurityConfigurer configurer) {
+    private <C extends SecurityConfigurer> C getOrApply(C configurer) {
         Class<? extends SecurityConfigurer> clazz = configurer.getClass();
 
-        SecurityConfigurer config = this.configurers.get(clazz);
+        C config = (C) this.configurers.get(clazz);
         if (config != null) {
             return config;
         }
