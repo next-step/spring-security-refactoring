@@ -15,6 +15,7 @@ public class HttpSecurityConfiguration {
     @Bean(HTTP_SECURITY_BEAN_NAME)
     @Scope("prototype")
     HttpSecurity httpSecurity(AuthenticationManager authenticationManager) throws Exception {
-        return new HttpSecurity(authenticationManager);
+        return new HttpSecurity(authenticationManager)
+                .securityContext(Customizer.withDefaults());
     }
 }

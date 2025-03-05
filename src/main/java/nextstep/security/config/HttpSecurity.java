@@ -5,6 +5,7 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.configurer.CsrfConfigurer;
 import nextstep.security.config.configurer.HttpBasicConfigurer;
 import nextstep.security.config.configurer.SecurityConfigurer;
+import nextstep.security.config.configurer.SecurityContextConfigurer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +55,11 @@ public class HttpSecurity {
 
     public HttpSecurity httpBasic(Customizer<HttpBasicConfigurer> httpBasicCustomizer) {
         httpBasicCustomizer.customize(getOrApply(new HttpBasicConfigurer()));
+        return HttpSecurity.this;
+    }
+
+    public HttpSecurity securityContext(Customizer<SecurityContextConfigurer> securityContextCustomizer) {
+        securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
         return HttpSecurity.this;
     }
 
