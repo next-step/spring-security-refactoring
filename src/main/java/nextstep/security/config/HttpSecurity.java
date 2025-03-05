@@ -1,16 +1,33 @@
 package nextstep.security.config;
 
 import jakarta.servlet.Filter;
+import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.configurer.CsrfConfigurer;
+import nextstep.security.config.configurer.HttpBasicConfigurer;
 import nextstep.security.config.configurer.SecurityConfigurer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HttpSecurity {
     private final LinkedHashMap<Class<? extends SecurityConfigurer>, SecurityConfigurer> configurers = new LinkedHashMap<>();
     private List<Filter> filters = new ArrayList<>();
+    private final Map<Class<?>, Object> sharedObjects = new HashMap<>();
+
+    public HttpSecurity(AuthenticationManager authenticationManager) {
+        setSharedObject(AuthenticationManager.class, authenticationManager);
+    }
+
+    public <C> C getSharedObject(Class<C> sharedType) {
+        return (C) this.sharedObjects.get(sharedType);
+    }
+
+    public <C> void setSharedObject(Class<C> sharedType, C object) {
+        this.sharedObjects.put(sharedType, object);
+    }
 
     public SecurityFilterChain build() {
         init();
@@ -32,6 +49,11 @@ public class HttpSecurity {
 
     public HttpSecurity csrf(Customizer<CsrfConfigurer> csrfCustomizer) {
         csrfCustomizer.customize(getOrApply(new CsrfConfigurer()));
+        return HttpSecurity.this;
+    }
+
+    public HttpSecurity httpBasic(Customizer<HttpBasicConfigurer> httpBasicCustomizer) {
+        httpBasicCustomizer.customize(getOrApply(new HttpBasicConfigurer()));
         return HttpSecurity.this;
     }
 

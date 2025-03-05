@@ -5,6 +5,9 @@ import nextstep.oauth2.authentication.OAuth2LoginAuthenticationProvider;
 import nextstep.oauth2.registration.ClientRegistration;
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.oauth2.userinfo.OAuth2UserService;
+import nextstep.oauth2.web.OAuth2AuthorizationRequestRedirectFilter;
+import nextstep.oauth2.web.OAuth2AuthorizedClientRepository;
+import nextstep.oauth2.web.OAuth2LoginAuthenticationFilter;
 import nextstep.security.access.AnyRequestMatcher;
 import nextstep.security.access.MvcRequestMatcher;
 import nextstep.security.access.RequestMatcherEntry;
@@ -12,12 +15,16 @@ import nextstep.security.access.hierarchicalroles.RoleHierarchy;
 import nextstep.security.access.hierarchicalroles.RoleHierarchyImpl;
 import nextstep.security.authentication.*;
 import nextstep.security.authorization.*;
+import nextstep.security.config.Customizer;
+import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.HttpSecurity;
 import nextstep.security.config.SecurityFilterChain;
 import nextstep.security.config.annotation.EnableWebSecurity;
+import nextstep.security.context.SecurityContextHolderFilter;
 import nextstep.security.userdetails.UserDetailsService;
+import nextstep.security.web.csrf.CsrfFilter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +32,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 
 import java.util.*;
-
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -36,17 +42,15 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2ClientProperties oAuth2ClientProperties;
-    private final HttpSecurity httpSecurity;
 
-    public SecurityConfig(UserDetailsService userDetailsService, OAuth2UserService oAuth2UserService, OAuth2ClientProperties oAuth2ClientProperties, final HttpSecurity httpSecurity) {
+    public SecurityConfig(UserDetailsService userDetailsService, OAuth2UserService oAuth2UserService, OAuth2ClientProperties oAuth2ClientProperties) {
         this.userDetailsService = userDetailsService;
         this.oAuth2UserService = oAuth2UserService;
         this.oAuth2ClientProperties = oAuth2ClientProperties;
-        this.httpSecurity = httpSecurity;
     }
 
     @Bean
-    public DelegatingFilterProxy delegatingFilterProxy() {
+    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity httpSecurity) {
         return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(httpSecurity))));
     }
 
@@ -120,6 +124,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain2(HttpSecurity http) {
         return http
                 .csrf(c -> c.ignoringRequestMatchers("/login"))
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 }
