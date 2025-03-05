@@ -3,6 +3,7 @@ package nextstep.security.config;
 import jakarta.servlet.Filter;
 import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.configurer.CsrfConfigurer;
+import nextstep.security.config.configurer.FormLoginConfigurer;
 import nextstep.security.config.configurer.HttpBasicConfigurer;
 import nextstep.security.config.configurer.SecurityConfigurer;
 import nextstep.security.config.configurer.SecurityContextConfigurer;
@@ -58,6 +59,12 @@ public class HttpSecurity {
         return HttpSecurity.this;
     }
 
+    public HttpSecurity formLogin(Customizer<FormLoginConfigurer> httpBasicCustomizer) {
+        httpBasicCustomizer.customize(getOrApply(new FormLoginConfigurer()));
+        return HttpSecurity.this;
+    }
+
+
     public HttpSecurity securityContext(Customizer<SecurityContextConfigurer> securityContextCustomizer) {
         securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
         return HttpSecurity.this;
@@ -77,5 +84,9 @@ public class HttpSecurity {
 
         this.configurers.put(clazz, configurer);
         return configurer;
+    }
+
+    public HttpSecurity formLogin() {
+        throw new UnsupportedOperationException("Unsupported formLogin");
     }
 }
