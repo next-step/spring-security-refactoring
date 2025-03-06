@@ -11,8 +11,6 @@ import nextstep.security.authorization.AuthorityAuthorizationManager;
 import nextstep.security.authorization.PermitAllAuthorizationManager;
 import nextstep.security.authorization.SecuredMethodInterceptor;
 import nextstep.security.config.Customizer;
-import nextstep.security.config.DelegatingFilterProxy;
-import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.SecurityFilterChain;
 import nextstep.security.httpsecurity.EnableWebSecurity;
 import nextstep.security.httpsecurity.HttpSecurity;
@@ -23,7 +21,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -36,16 +33,6 @@ public class SecurityConfig {
 
     public SecurityConfig(OAuth2ClientProperties oAuth2ClientProperties) {
         this.oAuth2ClientProperties = oAuth2ClientProperties;
-    }
-
-    @Bean
-    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity http) {
-        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(http))));
-    }
-
-    @Bean
-    public FilterChainProxy filterChainProxy(List<SecurityFilterChain> securityFilterChains) {
-        return new FilterChainProxy(securityFilterChains);
     }
 
     @Bean
