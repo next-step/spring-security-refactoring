@@ -1,8 +1,6 @@
 package nextstep.app;
 
 import nextstep.oauth2.OAuth2ClientProperties;
-import nextstep.oauth2.registration.ClientRegistration;
-import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.security.access.AnyRequestMatcher;
 import nextstep.security.access.MvcRequestMatcher;
 import nextstep.security.access.hierarchicalroles.RoleHierarchy;
@@ -20,21 +18,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Configuration
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
 @EnableWebSecurity
 public class SecurityConfig {
-    private final OAuth2ClientProperties oAuth2ClientProperties;
-
-    public SecurityConfig(OAuth2ClientProperties oAuth2ClientProperties) {
-        this.oAuth2ClientProperties = oAuth2ClientProperties;
-    }
-
     @Bean
     public SecuredMethodInterceptor securedMethodInterceptor() {
         return new SecuredMethodInterceptor();
@@ -60,24 +49,6 @@ public class SecurityConfig {
                         .addEntry(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager<Void>())
                 )
                 .build();
-    }
-
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        Map<String, ClientRegistration> registrations = getClientRegistrations(oAuth2ClientProperties);
-        return new ClientRegistrationRepository(registrations);
-    }
-
-    private static Map<String, ClientRegistration> getClientRegistrations(OAuth2ClientProperties properties) {
-        Map<String, ClientRegistration> clientRegistrations = new HashMap<>();
-        properties.getRegistration().forEach((key, value) -> clientRegistrations.put(key,
-                getClientRegistration(key, value, properties.getProvider().get(key))));
-        return clientRegistrations;
-    }
-
-    private static ClientRegistration getClientRegistration(String registrationId,
-                                                            OAuth2ClientProperties.Registration registration, OAuth2ClientProperties.Provider provider) {
-        return new ClientRegistration(registrationId, registration.getClientId(), registration.getClientSecret(), registration.getRedirectUri(), registration.getScope(), provider.getAuthorizationUri(), provider.getTokenUri(), provider.getUserInfoUri(), provider.getUserNameAttributeName());
     }
 }
 
