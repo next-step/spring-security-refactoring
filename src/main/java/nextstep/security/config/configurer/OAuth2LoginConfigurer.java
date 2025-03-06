@@ -6,7 +6,8 @@ import nextstep.oauth2.web.OAuth2AuthorizedClientRepository;
 import nextstep.oauth2.web.OAuth2LoginAuthenticationFilter;
 import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.HttpSecurity;
-import org.springframework.context.ApplicationContext;
+
+import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
 
 public class OAuth2LoginConfigurer implements SecurityConfigurer {
     @Override
@@ -26,14 +27,5 @@ public class OAuth2LoginConfigurer implements SecurityConfigurer {
 
         final OAuth2LoginAuthenticationFilter oAuth2LoginAuthenticationFilter = new OAuth2LoginAuthenticationFilter(clientRegistrationRepository, authorizedClientRepository, authenticationManager);
         http.addFilter(oAuth2LoginAuthenticationFilter);
-    }
-
-    private static <T> T findSharedOrContextBean(HttpSecurity http, Class<T> beanType) {
-        final T sharedObject = http.getSharedObject(beanType);
-        if (sharedObject != null) {
-            return sharedObject;
-        }
-
-        return http.getSharedObject(ApplicationContext.class).getBean(beanType);
     }
 }

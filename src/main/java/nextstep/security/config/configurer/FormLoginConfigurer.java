@@ -4,6 +4,8 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.authentication.UsernamePasswordAuthenticationFilter;
 import nextstep.security.config.HttpSecurity;
 
+import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
+
 public class FormLoginConfigurer implements SecurityConfigurer {
     @Override
     public void init(final HttpSecurity http) {
@@ -11,7 +13,7 @@ public class FormLoginConfigurer implements SecurityConfigurer {
 
     @Override
     public void configure(final HttpSecurity http) {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        final AuthenticationManager authenticationManager = findSharedOrContextBean(http, AuthenticationManager.class);
         UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter(authenticationManager);
         http.addFilter(filter);
     }

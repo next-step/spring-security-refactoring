@@ -5,6 +5,8 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.authentication.BasicAuthenticationFilter;
 import nextstep.security.config.HttpSecurity;
 
+import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
+
 public class HttpBasicConfigurer implements SecurityConfigurer {
     @Override
     public void init(HttpSecurity http) {
@@ -12,7 +14,7 @@ public class HttpBasicConfigurer implements SecurityConfigurer {
 
     @Override
     public void configure(HttpSecurity http) {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        final AuthenticationManager authenticationManager = findSharedOrContextBean(http, AuthenticationManager.class);
         BasicAuthenticationFilter basicAuthenticationFilter = new BasicAuthenticationFilter(authenticationManager);
         http.addFilter(basicAuthenticationFilter);
     }

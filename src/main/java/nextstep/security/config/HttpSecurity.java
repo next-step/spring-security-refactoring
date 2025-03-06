@@ -20,8 +20,12 @@ public class HttpSecurity {
     private List<Filter> filters = new ArrayList<>();
     private final Map<Class<?>, Object> sharedObjects = new HashMap<>();
 
-    public HttpSecurity(AuthenticationManager authenticationManager) {
+    public HttpSecurity(AuthenticationManager authenticationManager, Map<Class<?>, Object> sharedObjects) {
         setSharedObject(AuthenticationManager.class, authenticationManager);
+
+        for (Map.Entry<Class<?>, Object> entry : sharedObjects.entrySet()) {
+            setSharedObject((Class<Object>) entry.getKey(), entry.getValue());
+        }
     }
 
     public <C> C getSharedObject(Class<C> sharedType) {
