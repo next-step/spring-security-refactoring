@@ -2,6 +2,7 @@ package nextstep.security.config;
 
 import jakarta.servlet.Filter;
 import nextstep.security.authentication.AuthenticationManager;
+import nextstep.security.config.configurer.AuthorizeHttpRequestsConfigurer;
 import nextstep.security.config.configurer.CsrfConfigurer;
 import nextstep.security.config.configurer.FormLoginConfigurer;
 import nextstep.security.config.configurer.HttpBasicConfigurer;
@@ -77,6 +78,13 @@ public class HttpSecurity {
 
     public HttpSecurity securityContext(Customizer<SecurityContextConfigurer> securityContextCustomizer) {
         securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
+        return HttpSecurity.this;
+    }
+
+
+    public HttpSecurity authorizeHttpRequests(Customizer<AuthorizeHttpRequestsConfigurer.AuthorizationManagerRequestMatcherRegistry>
+                                                      authorizeHttpRequestsCustomizer) {
+        authorizeHttpRequestsCustomizer.customize(getOrApply(new AuthorizeHttpRequestsConfigurer(this)).getRegistry());
         return HttpSecurity.this;
     }
 

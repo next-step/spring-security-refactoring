@@ -90,18 +90,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public RequestMatcherDelegatingAuthorizationManager requestAuthorizationManager() {
-        List<RequestMatcherEntry<AuthorizationManager>> mappings = new ArrayList<>();
-        mappings.add(new RequestMatcherEntry<>(new MvcRequestMatcher(HttpMethod.GET, "/members"), new AuthorityAuthorizationManager(roleHierarchy(), "ADMIN")));
-        mappings.add(new RequestMatcherEntry<>(new MvcRequestMatcher(HttpMethod.GET, "/members/me"), new AuthorityAuthorizationManager(roleHierarchy(), "USER")));
-        mappings.add(new RequestMatcherEntry<>(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager<Void>()));
-        return new RequestMatcherDelegatingAuthorizationManager(mappings);
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain2(HttpSecurity http) {
         return http
                 .csrf(c -> c.ignoringRequestMatchers("/login"))
+                .authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers("/members").hasRole("ADMIN")
+                                .requestMatchers("/members/me").hasRole("USER")
+                                .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
                 .oauth2Login(Customizer.withDefaults())
