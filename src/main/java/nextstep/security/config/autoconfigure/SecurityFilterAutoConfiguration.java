@@ -9,7 +9,7 @@ public class SecurityFilterAutoConfiguration {
 
     @Bean
     public DelegatingFilterProxyRegistrationBean securityFilterChainRegistration() {
-        // Security 설정이 활성화되면 springSecurityFilterChain이라는 필터 빈을 자동으로 생성하고 이 필터를 서블릿 컨테이너에 등록.
+        // DelegatingFilterProxy가 생성, 생성되는 DelegatingFilterProxy의 delegate가 되는 빈의 이름이 FilterChainProxy인 "springSecurityFilterChain"
         DelegatingFilterProxyRegistrationBean registration = new DelegatingFilterProxyRegistrationBean(DEFAULT_FILTER_NAME);
         return registration;
     }

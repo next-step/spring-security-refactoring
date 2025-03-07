@@ -27,6 +27,7 @@ public class WebSecurityConfiguration {
         this.securityFilterChains = securityFilterChains;
     }
 
+    // springSecurityFilterChain이름의 빈으로 FilterChainProxy을 생성
     @Bean(name = DEFAULT_FILTER_NAME)
     public Filter springSecurityFilterChain() {
         boolean hasFilterChain = !this.securityFilterChains.isEmpty();

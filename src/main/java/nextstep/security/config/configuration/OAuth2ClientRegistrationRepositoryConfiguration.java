@@ -38,5 +38,4 @@ public class OAuth2ClientRegistrationRepositoryConfiguration {
                                                             OAuth2ClientProperties.Registration registration, OAuth2ClientProperties.Provider provider) {
         return new ClientRegistration(registrationId, registration.getClientId(), registration.getClientSecret(), registration.getRedirectUri(), registration.getScope(), provider.getAuthorizationUri(), provider.getTokenUri(), provider.getUserInfoUri(), provider.getUserNameAttributeName());
     }
-
 }
