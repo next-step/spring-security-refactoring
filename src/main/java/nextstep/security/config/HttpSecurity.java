@@ -6,6 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import nextstep.security.authentication.AuthenticationManager;
+import nextstep.security.authentication.AuthenticationProvider;
+import nextstep.security.config.authentication.AuthenticationManagerBuilder;
 import nextstep.security.config.configurer.AuthorizeHttpRequestsConfigurer;
 import nextstep.security.config.configurer.CsrfConfigurer;
 import nextstep.security.config.configurer.FormLoginConfigurer;
@@ -29,9 +31,8 @@ public class HttpSecurity {
     private FilterOrderRegistration filterOrders = new FilterOrderRegistration();
     private final Map<Class<?>, Object> sharedObjects = new HashMap<>();
 
-    public HttpSecurity(AuthenticationManager authenticationManager, Map<Class<?>, Object> sharedObjects) {
-        setSharedObject(AuthenticationManager.class, authenticationManager);
-
+    public HttpSecurity(AuthenticationManagerBuilder authenticationManagerBuilder, Map<Class<?>, Object> sharedObjects) {
+        setSharedObject(AuthenticationManagerBuilder.class, authenticationManagerBuilder);
         for (Map.Entry<Class<?>, Object> entry : sharedObjects.entrySet()) {
             setSharedObject((Class<Object>) entry.getKey(), entry.getValue());
         }
@@ -43,12 +44,6 @@ public class HttpSecurity {
 
     public <C> void setSharedObject(Class<C> sharedType, C object) {
         this.sharedObjects.put(sharedType, object);
-    }
-
-    public SecurityFilterChain build() {
-        init();
-        configure();
-        return performBuild();
     }
 
     private DefaultSecurityFilterChain performBuild() {
@@ -67,10 +62,22 @@ public class HttpSecurity {
         }
     }
 
+    private void beforeConfigure() {
+        AuthenticationManager manager = getAuthenticationRegistry().build();
+        setSharedObject(AuthenticationManager.class, manager);
+    }
+
     private void configure() {
         for (SecurityConfigurer configurer : this.configurers.values()) {
             configurer.configure(this);
         }
+    }
+
+    public SecurityFilterChain build() {
+        init();
+        beforeConfigure();
+        configure();
+        return performBuild();
     }
 
     public HttpSecurity addFilter(Filter filter) {
@@ -80,6 +87,15 @@ public class HttpSecurity {
         }
         filters.add(new OrderedFilter(filter, order));
         return this;
+    }
+
+    public HttpSecurity authenticationProvider(AuthenticationProvider authenticationProvider) {
+        getAuthenticationRegistry().authenticationProvider(authenticationProvider);
+        return this;
+    }
+
+    private AuthenticationManagerBuilder getAuthenticationRegistry() {
+        return getSharedObject(AuthenticationManagerBuilder.class);
     }
 
     public HttpSecurity csrf(Customizer<CsrfConfigurer> csrfCustomizer) {

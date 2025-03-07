@@ -3,6 +3,7 @@ package nextstep.security.config;
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.oauth2.web.OAuth2AuthorizedClientRepository;
 import nextstep.security.authentication.AuthenticationManager;
+import nextstep.security.config.authentication.AuthenticationManagerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +27,10 @@ public class HttpSecurityConfiguration {
 
     @Bean(HTTP_SECURITY_BEAN_NAME)
     @Scope("prototype")
-    HttpSecurity httpSecurity(AuthenticationManager authenticationManager, ClientRegistrationRepository clientRegistrationRepository,
+    HttpSecurity httpSecurity(ClientRegistrationRepository clientRegistrationRepository,
                               OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository) throws Exception {
-        final HttpSecurity httpSecurity = new HttpSecurity(authenticationManager, createSharedObjects())
+        AuthenticationManagerBuilder authenticationBuilder = new AuthenticationManagerBuilder(context);
+        final HttpSecurity httpSecurity = new HttpSecurity(authenticationBuilder, createSharedObjects())
                 .securityContext(Customizer.withDefaults());
 
         httpSecurity.setSharedObject(ClientRegistrationRepository.class, clientRegistrationRepository);

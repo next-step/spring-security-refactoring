@@ -52,14 +52,6 @@ import java.util.Set;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-    private final OAuth2UserService oAuth2UserService;
-
-    public SecurityConfig(UserDetailsService userDetailsService, OAuth2UserService oAuth2UserService) {
-        this.userDetailsService = userDetailsService;
-        this.oAuth2UserService = oAuth2UserService;
-    }
-
     @Bean
     public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity httpSecurity) {
         return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(httpSecurity))));
@@ -80,13 +72,6 @@ public class SecurityConfig {
         return RoleHierarchyImpl.with()
                 .role("ADMIN").implies("USER")
                 .build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(List.of(
-                new DaoAuthenticationProvider(userDetailsService),
-                new OAuth2LoginAuthenticationProvider(oAuth2UserService)));
     }
 
     @Bean
