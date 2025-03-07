@@ -1,9 +1,10 @@
-package nextstep.security.config;
+package nextstep.security.config.configuration;
 
 import nextstep.oauth2.OAuth2ClientProperties;
 import nextstep.oauth2.registration.ClientRegistration;
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
-class OAuth2ClientRegistrationRepositoryConfiguration {
+@EnableConfigurationProperties(OAuth2ClientProperties.class)
+public class OAuth2ClientRegistrationRepositoryConfiguration {
     private final OAuth2ClientProperties oAuth2ClientProperties;
 
     OAuth2ClientRegistrationRepositoryConfiguration(final OAuth2ClientProperties oAuth2ClientProperties) {

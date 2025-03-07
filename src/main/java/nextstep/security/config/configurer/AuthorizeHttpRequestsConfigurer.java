@@ -18,7 +18,7 @@ import org.springframework.http.HttpMethod;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
+import static nextstep.security.config.configuration.ConfigurationUtils.findSharedOrContextBean;
 
 public class AuthorizeHttpRequestsConfigurer implements SecurityConfigurer {
     private final RoleHierarchy roleHierarchy;

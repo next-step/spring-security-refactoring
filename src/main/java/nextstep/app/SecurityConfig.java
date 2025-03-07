@@ -51,17 +51,6 @@ import java.util.Set;
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
 @EnableWebSecurity
 public class SecurityConfig {
-
-    @Bean
-    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity httpSecurity) {
-        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(httpSecurity))));
-    }
-
-    @Bean
-    public FilterChainProxy filterChainProxy(List<SecurityFilterChain> securityFilterChains) {
-        return new FilterChainProxy(securityFilterChains);
-    }
-
     @Bean
     public SecuredMethodInterceptor securedMethodInterceptor() {
         return new SecuredMethodInterceptor();

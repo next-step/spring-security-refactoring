@@ -4,7 +4,7 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.authentication.UsernamePasswordAuthenticationFilter;
 import nextstep.security.config.HttpSecurity;
 
-import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
+import static nextstep.security.config.configuration.ConfigurationUtils.findSharedOrContextBean;
 
 public class FormLoginConfigurer implements SecurityConfigurer {
     @Override

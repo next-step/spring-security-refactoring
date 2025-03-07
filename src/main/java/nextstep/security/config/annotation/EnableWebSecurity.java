@@ -1,6 +1,7 @@
 package nextstep.security.config.annotation;
 
-import nextstep.security.config.HttpSecurityConfiguration;
+import nextstep.security.config.configuration.HttpSecurityConfiguration;
+import nextstep.security.config.configuration.WebSecurityConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -12,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({HttpSecurityConfiguration.class })
+@Import({HttpSecurityConfiguration.class, WebSecurityConfiguration.class})
 public @interface EnableWebSecurity {
 
     /**

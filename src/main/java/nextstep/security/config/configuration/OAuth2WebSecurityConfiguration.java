@@ -1,4 +1,4 @@
-package nextstep.security.config;
+package nextstep.security.config.configuration;
 
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.oauth2.web.OAuth2AuthorizedClientRepository;

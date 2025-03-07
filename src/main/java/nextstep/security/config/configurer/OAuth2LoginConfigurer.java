@@ -11,7 +11,7 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.HttpSecurity;
 import org.springframework.context.ApplicationContext;
 
-import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
+import static nextstep.security.config.configuration.ConfigurationUtils.findSharedOrContextBean;
 
 public class OAuth2LoginConfigurer implements SecurityConfigurer {
     @Override

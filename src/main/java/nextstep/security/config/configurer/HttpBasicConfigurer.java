@@ -5,7 +5,7 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.authentication.BasicAuthenticationFilter;
 import nextstep.security.config.HttpSecurity;
 
-import static nextstep.security.config.Oauth2ConfigurationUtils.findSharedOrContextBean;
+import static nextstep.security.config.configuration.ConfigurationUtils.findSharedOrContextBean;
 
 public class HttpBasicConfigurer implements SecurityConfigurer {
     @Override
