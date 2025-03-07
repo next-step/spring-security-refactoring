@@ -97,7 +97,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 .requestMatchers("/members").hasRole("ADMIN")
                                 .requestMatchers("/members/me").hasRole("USER")
-                                .anyRequest().authenticated())
+                                .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
                 .oauth2Login(Customizer.withDefaults())
