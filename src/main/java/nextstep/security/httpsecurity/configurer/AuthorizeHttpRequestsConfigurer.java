@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorizeHttpRequestsConfigurer implements SecurityConfigurer {
-    private List<RequestMatcherEntry<AuthorizationManager>> mappings = new ArrayList<>();
+    private final List<RequestMatcherEntry<AuthorizationManager>> mappings = new ArrayList<>();
 
     @Override
     public void configure(HttpSecurity http) {

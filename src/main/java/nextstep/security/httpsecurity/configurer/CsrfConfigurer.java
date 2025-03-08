@@ -9,9 +9,9 @@ import java.util.List;
 
 public class CsrfConfigurer implements SecurityConfigurer {
 
-    private RequestMatcher requireCsrfProtectionMatcher = CsrfFilter.DEFAULT_CSRF_MATCHER;
+    private final RequestMatcher requireCsrfProtectionMatcher = CsrfFilter.DEFAULT_CSRF_MATCHER;
 
-    private List<RequestMatcher> ignoredCsrfProtectionMatchers = new ArrayList<>();
+    private final List<RequestMatcher> ignoredCsrfProtectionMatchers = new ArrayList<>();
 
     @Override
     public void init(HttpSecurity http) {

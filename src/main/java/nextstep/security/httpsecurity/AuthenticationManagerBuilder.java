@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AuthenticationManagerBuilder {
 
-    private List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
+    private final List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
 
     public AuthenticationManagerBuilder(ApplicationContext context) {
         List<UserDetailsService> userDetailsServices = new ArrayList<>(context.getBeansOfType(UserDetailsService.class).values());

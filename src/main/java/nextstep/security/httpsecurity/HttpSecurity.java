@@ -11,7 +11,7 @@ import java.util.*;
 
 public class HttpSecurity {
     private final LinkedHashMap<Class<? extends SecurityConfigurer>, SecurityConfigurer> configurers = new LinkedHashMap<>();
-    private List<Filter> filters = new ArrayList<>();
+    private final List<Filter> filters = new ArrayList<>();
     private final Map<Class<?>, Object> sharedObjects = new HashMap<>();
 
     public HttpSecurity(AuthenticationManagerBuilder authenticationManagerBuilder, Map<Class<?>, Object> sharedObjects) {
@@ -23,12 +23,12 @@ public class HttpSecurity {
 
     public HttpSecurity securityContext(Customizer<SecurityContextConfigurer> securityContextCustomizer) {
         securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
-        return HttpSecurity.this;
+        return this;
     }
 
     public HttpSecurity oauth2Login(Customizer<OAuth2LoginConfigurer> oauth2LoginCustomizer) {
         oauth2LoginCustomizer.customize(getOrApply(new OAuth2LoginConfigurer()));
-        return HttpSecurity.this;
+        return this;
     }
 
     public <C> C getSharedObject(Class<C> sharedType) {
@@ -79,22 +79,22 @@ public class HttpSecurity {
 
     public HttpSecurity csrf(Customizer<CsrfConfigurer> csrfCustomizer) {
         csrfCustomizer.customize(getOrApply(new CsrfConfigurer()));
-        return HttpSecurity.this;
+        return this;
     }
 
     public HttpSecurity httpBasic(Customizer<BasicConfigurer> basicCustomizer) {
         basicCustomizer.customize(getOrApply(new BasicConfigurer()));
-        return HttpSecurity.this;
+        return this;
     }
 
     public HttpSecurity formLogin(Customizer<FormLoginConfigurer> formLoginConfigurer) {
         formLoginConfigurer.customize(getOrApply(new FormLoginConfigurer()));
-        return HttpSecurity.this;
+        return this;
     }
 
     public HttpSecurity authorizeHttpRequests(Customizer<AuthorizeHttpRequestsConfigurer> authorizeConfigurer) {
         authorizeConfigurer.customize(getOrApply(new AuthorizeHttpRequestsConfigurer()));
-        return HttpSecurity.this;
+        return this;
     }
 
     private <C extends SecurityConfigurer> C getOrApply(C configurer) {

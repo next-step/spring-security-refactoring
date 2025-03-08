@@ -1,7 +1,6 @@
 package nextstep.security.httpsecurity;
 
 import nextstep.security.config.Customizer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,11 @@ public class HttpSecurityConfiguration {
 
     private static final String HTTPSECURITY_BEAN_NAME = BEAN_NAME_PREFIX + "httpSecurity";
 
-    @Autowired
-    private ApplicationContext context;
+    private final ApplicationContext context;
+
+    public HttpSecurityConfiguration(ApplicationContext context) {
+        this.context = context;
+    }
 
     @Bean(HTTPSECURITY_BEAN_NAME)
     @Scope("prototype")
