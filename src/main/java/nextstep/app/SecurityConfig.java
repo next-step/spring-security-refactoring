@@ -31,7 +31,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain2(HttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .csrf(c -> c.ignoringRequestMatchers("/login"))
                 .authorizeHttpRequests(
