@@ -25,25 +25,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HttpSecurity {
+public class HttpSecurity extends SecurityBuilder<SecurityFilterChain> {
     private final LinkedHashMap<Class<? extends SecurityConfigurer>, SecurityConfigurer> configurers = new LinkedHashMap<>();
     private List<OrderedFilter> filters = new ArrayList<>();
     private FilterOrderRegistration filterOrders = new FilterOrderRegistration();
-    private final Map<Class<?>, Object> sharedObjects = new HashMap<>();
 
     public HttpSecurity(AuthenticationManagerBuilder authenticationManagerBuilder, Map<Class<?>, Object> sharedObjects) {
         setSharedObject(AuthenticationManagerBuilder.class, authenticationManagerBuilder);
         for (Map.Entry<Class<?>, Object> entry : sharedObjects.entrySet()) {
             setSharedObject((Class<Object>) entry.getKey(), entry.getValue());
         }
-    }
-
-    public <C> C getSharedObject(Class<C> sharedType) {
-        return (C) this.sharedObjects.get(sharedType);
-    }
-
-    public <C> void setSharedObject(Class<C> sharedType, C object) {
-        this.sharedObjects.put(sharedType, object);
     }
 
     private DefaultSecurityFilterChain performBuild() {
@@ -73,6 +64,7 @@ public class HttpSecurity {
         }
     }
 
+    @Override
     public SecurityFilterChain build() {
         init();
         beforeConfigure();

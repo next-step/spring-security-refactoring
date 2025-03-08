@@ -4,13 +4,14 @@ import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.authentication.AuthenticationProvider;
 import nextstep.security.authentication.DaoAuthenticationProvider;
 import nextstep.security.authentication.ProviderManager;
+import nextstep.security.config.SecurityBuilder;
 import nextstep.security.userdetails.UserDetailsService;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuthenticationManagerBuilder {
+public class AuthenticationManagerBuilder extends SecurityBuilder<AuthenticationManager> {
 
     private List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
 
@@ -33,6 +34,7 @@ public class AuthenticationManagerBuilder {
         return this;
     }
 
+    @Override
     public AuthenticationManager build() {
         ProviderManager providerManager = new ProviderManager(this.authenticationProviders);
         return providerManager;
