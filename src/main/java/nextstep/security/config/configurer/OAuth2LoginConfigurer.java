@@ -37,7 +37,7 @@ public class OAuth2LoginConfigurer implements SecurityConfigurer {
                 new OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository);
         http.addFilter(authorizationRequestFilter);
 
-        final OAuth2LoginAuthenticationFilter oAuth2LoginAuthenticationFilter = new OAuth2LoginAuthenticationFilter(clientRegistrationRepository, authorizedClientRepository, authenticationManager);
+        final OAuth2LoginAuthenticationFilter oAuth2LoginAuthenticationFilter = new OAuth2LoginAuthenticationFilter(clientRegistrationRepository, authorizedClientRepository);
         oAuth2LoginAuthenticationFilter.setAuthenticationManager(authenticationManager);
         http.addFilter(oAuth2LoginAuthenticationFilter);
     }

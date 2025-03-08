@@ -31,7 +31,7 @@ public class OAuth2LoginAuthenticationFilter extends AbstractAuthenticationProce
 
     private final Converter<OAuth2LoginAuthenticationToken, OAuth2AuthenticationToken> authenticationResultConverter = this::createAuthenticationResult;
 
-    public OAuth2LoginAuthenticationFilter(ClientRegistrationRepository clientRegistrationRepository, OAuth2AuthorizedClientRepository authorizedClientRepository, AuthenticationManager authenticationManager) {
+    public OAuth2LoginAuthenticationFilter(ClientRegistrationRepository clientRegistrationRepository, OAuth2AuthorizedClientRepository authorizedClientRepository) {
         super(DEFAULT_LOGIN_REQUEST_BASE_URI);
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.authorizedClientRepository = authorizedClientRepository;
