@@ -11,6 +11,10 @@ public class AuthorityAuthorizationManager<T> implements AuthorizationManager<T>
     private RoleHierarchy roleHierarchy = new NullRoleHierarchy();
     private final String authority;
 
+    public AuthorityAuthorizationManager(String authority) {
+        this.authority = authority;
+    }
+
     public AuthorityAuthorizationManager(RoleHierarchy roleHierarchy, String authority) {
         this.roleHierarchy = roleHierarchy;
         this.authority = authority;

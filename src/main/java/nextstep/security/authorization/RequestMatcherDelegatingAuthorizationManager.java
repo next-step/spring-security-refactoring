@@ -10,7 +10,7 @@ import java.util.List;
 public class RequestMatcherDelegatingAuthorizationManager implements AuthorizationManager<HttpServletRequest> {
     private final List<RequestMatcherEntry<AuthorizationManager>> mappings;
 
-    public RequestMatcherDelegatingAuthorizationManager(List<RequestMatcherEntry<AuthorizationManager>> mappings) {
+    public RequestMatcherDelegatingAuthorizationManager(final List<RequestMatcherEntry<AuthorizationManager>> mappings) {
         this.mappings = mappings;
     }
 
