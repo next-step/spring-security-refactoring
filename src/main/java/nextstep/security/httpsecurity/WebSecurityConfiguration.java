@@ -1,8 +1,6 @@
 package nextstep.security.httpsecurity;
 
 import jakarta.servlet.Filter;
-import nextstep.security.access.AnyRequestMatcher;
-import nextstep.security.authorization.PermitAllAuthorizationManager;
 import nextstep.security.config.Customizer;
 import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.config.FilterChainProxy;
@@ -38,7 +36,7 @@ public class WebSecurityConfiguration {
 
         //왜 체이닝 방식을 사용하지않았을까?
         if (!hasFilterChain) {
-            this.httpSecurity.authorizeHttpRequests((authorize) -> authorize.addEntry(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager()));
+            this.httpSecurity.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated());
             this.httpSecurity.formLogin(Customizer.withDefaults());
             this.httpSecurity.httpBasic(Customizer.withDefaults());
             DefaultSecurityFilterChain filterChain = this.httpSecurity.build();

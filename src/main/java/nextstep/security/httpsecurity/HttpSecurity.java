@@ -6,6 +6,7 @@ import nextstep.security.authentication.AuthenticationProvider;
 import nextstep.security.config.Customizer;
 import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.httpsecurity.configurer.*;
+import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
@@ -92,8 +93,15 @@ public class HttpSecurity {
         return this;
     }
 
-    public HttpSecurity authorizeHttpRequests(Customizer<AuthorizeHttpRequestsConfigurer> authorizeConfigurer) {
-        authorizeConfigurer.customize(getOrApply(new AuthorizeHttpRequestsConfigurer()));
+//    public HttpSecurity authorizeHttpRequests(Customizer<AuthorizeHttpRequestsConfigurer> authorizeHttpRequestsCustomizer) {
+//        authorizeHttpRequestsCustomizer.customize(getOrApply(new AuthorizeHttpRequestsConfigurer()));
+//        return this;
+//    }
+
+    public HttpSecurity authorizeHttpRequests(
+            Customizer<AuthorizeHttpRequestsConfigurer.AuthorizationManagerRequestMatcherRegistry> authorizeHttpRequestsCustomizer) {
+        ApplicationContext context = getContext();
+        authorizeHttpRequestsCustomizer.customize(getOrApply(new AuthorizeHttpRequestsConfigurer(context)).getRegistry());
         return this;
     }
 
@@ -107,4 +115,7 @@ public class HttpSecurity {
         return configurer;
     }
 
+    private ApplicationContext getContext() {
+        return getSharedObject(ApplicationContext.class);
+    }
 }
