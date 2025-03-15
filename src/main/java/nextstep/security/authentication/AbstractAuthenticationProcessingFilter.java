@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.security.access.RequestMatcher;
 import nextstep.security.context.SecurityContext;
 import nextstep.security.context.SecurityContextHolder;
+import nextstep.security.context.HttpSessionSecurityContextRepository;
 import nextstep.security.context.SecurityContextRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
@@ -18,12 +19,13 @@ import java.io.IOException;
 public abstract class AbstractAuthenticationProcessingFilter extends GenericFilterBean {
     private AuthenticationManager authenticationManager;
 
-    private final RequestMatcher requiresAuthenticationRequestMatcher;
+    private RequestMatcher requestMatcher;
 
-    private final SecurityContextRepository securityContextRepository = new SecurityContextRepository();
+    private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
     private static final AuthenticationSuccessHandler successHandler = (request, response, authentication) -> response.sendRedirect("/");
     private static final AuthenticationFailureHandler failureHandler = (request, response, exception) -> response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+
 
     protected AbstractAuthenticationProcessingFilter(String filterProcessesUrl, AuthenticationManager authenticationManager) {
         this(request -> {
@@ -33,7 +35,7 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
     }
 
     protected AbstractAuthenticationProcessingFilter(RequestMatcher requiresAuthenticationRequestMatcher, AuthenticationManager authenticationManager) {
-        this.requiresAuthenticationRequestMatcher = requiresAuthenticationRequestMatcher;
+        this.requestMatcher = requiresAuthenticationRequestMatcher;
         this.authenticationManager = authenticationManager;
     }
 
@@ -66,17 +68,17 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
         SecurityContextHolder.setContext(context);
         this.securityContextRepository.saveContext(context, request, response);
 
-        this.successHandler.onAuthenticationSuccess(request, response, authResult);
+        successHandler.onAuthenticationSuccess(request, response, authResult);
     }
 
     private void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         SecurityContextHolder.clearContext();
 
-        this.failureHandler.onAuthenticationFailure(request, response, failed);
+        failureHandler.onAuthenticationFailure(request, response, failed);
     }
 
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        return this.requiresAuthenticationRequestMatcher.matches(request);
+        return this.requestMatcher.matches(request);
     }
 
     public abstract Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -84,5 +86,13 @@ public abstract class AbstractAuthenticationProcessingFilter extends GenericFilt
 
     protected AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
+    }
+
+    public void setRequestMatcher(final RequestMatcher requestMatcher) {
+        this.requestMatcher = requestMatcher;
+    }
+
+    public void setSecurityContextRepository(SecurityContextRepository securityContextRepository) {
+        this.securityContextRepository = securityContextRepository;
     }
 }

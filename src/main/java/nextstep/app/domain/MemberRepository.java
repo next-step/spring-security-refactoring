@@ -8,5 +8,7 @@ public interface MemberRepository {
 
     List<Member> findAll();
 
+    void deleteAll();
+
     Member save(Member member);
 }

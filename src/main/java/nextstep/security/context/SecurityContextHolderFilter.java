@@ -10,7 +10,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 public class SecurityContextHolderFilter extends GenericFilterBean {
-    private final SecurityContextRepository securityContextRepository = new SecurityContextRepository();
+    private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -22,4 +22,10 @@ public class SecurityContextHolderFilter extends GenericFilterBean {
             SecurityContextHolder.clearContext();
         }
     }
+
+    public void setSecurityContextRepository(SecurityContextRepository securityContextRepository) {
+        this.securityContextRepository = securityContextRepository;
+    }
+
+
 }
