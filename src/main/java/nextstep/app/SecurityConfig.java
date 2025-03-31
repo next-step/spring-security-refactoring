@@ -1,41 +1,38 @@
 package nextstep.app;
 
+import nextstep.autoconfigure.EnableSpringBootSecurityConfiguration;
 import nextstep.oauth2.OAuth2ClientProperties;
 import nextstep.oauth2.authentication.OAuth2LoginAuthenticationProvider;
 import nextstep.oauth2.registration.ClientRegistration;
 import nextstep.oauth2.registration.ClientRegistrationRepository;
 import nextstep.oauth2.userinfo.OAuth2UserService;
-import nextstep.oauth2.web.OAuth2AuthorizationRequestRedirectFilter;
-import nextstep.oauth2.web.OAuth2AuthorizedClientRepository;
-import nextstep.oauth2.web.OAuth2LoginAuthenticationFilter;
-import nextstep.security.access.AnyRequestMatcher;
-import nextstep.security.access.MvcRequestMatcher;
-import nextstep.security.access.RequestMatcherEntry;
 import nextstep.security.access.hierarchicalroles.RoleHierarchy;
 import nextstep.security.access.hierarchicalroles.RoleHierarchyImpl;
-import nextstep.security.authentication.*;
-import nextstep.security.authorization.*;
-import nextstep.security.config.DefaultSecurityFilterChain;
+import nextstep.security.authentication.AuthenticationManager;
+import nextstep.security.authentication.DaoAuthenticationProvider;
+import nextstep.security.authentication.ProviderManager;
+import nextstep.security.authorization.SecuredMethodInterceptor;
+import nextstep.security.config.Customizer;
 import nextstep.security.config.DelegatingFilterProxy;
 import nextstep.security.config.FilterChainProxy;
 import nextstep.security.config.SecurityFilterChain;
-import nextstep.security.context.SecurityContextHolderFilter;
+import nextstep.security.config.annotation.web.builders.HttpSecurity;
+import nextstep.security.config.annotation.web.configuration.EnableWebSecurity;
 import nextstep.security.userdetails.UserDetailsService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.http.HttpMethod;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Configuration
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
+@EnableWebSecurity
+@EnableSpringBootSecurityConfiguration
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
@@ -49,8 +46,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DelegatingFilterProxy delegatingFilterProxy() {
-        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain())));
+    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity http) {
+        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain2(http))));
     }
 
     @Bean
@@ -64,13 +61,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.with()
-                .role("ADMIN").implies("USER")
-                .build();
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(List.of(
                 new DaoAuthenticationProvider(userDetailsService),
@@ -78,26 +68,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain() {
-        return new DefaultSecurityFilterChain(
-                List.of(
-                        new SecurityContextHolderFilter(),
-                        new UsernamePasswordAuthenticationFilter(authenticationManager()),
-                        new BasicAuthenticationFilter(authenticationManager()),
-                        new OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository()),
-                        new OAuth2LoginAuthenticationFilter(clientRegistrationRepository(), new OAuth2AuthorizedClientRepository(), authenticationManager()),
-                        new AuthorizationFilter(requestAuthorizationManager())
+    public SecurityFilterChain securityFilterChain2(HttpSecurity http) {
+        return http
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/members").hasRole("ADMIN")
+                        .requestMatchers("/members/me").authenticated()
+                        .anyRequest().permitAll()
                 )
-        );
+                .csrf(c -> c.ignoringRequestMatchers("/login"))
+                .formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
+                .oauth2Login(Customizer.withDefaults())
+                .build();
     }
 
     @Bean
-    public RequestMatcherDelegatingAuthorizationManager requestAuthorizationManager() {
-        List<RequestMatcherEntry<AuthorizationManager>> mappings = new ArrayList<>();
-        mappings.add(new RequestMatcherEntry<>(new MvcRequestMatcher(HttpMethod.GET, "/members"), new AuthorityAuthorizationManager(roleHierarchy(), "ADMIN")));
-        mappings.add(new RequestMatcherEntry<>(new MvcRequestMatcher(HttpMethod.GET, "/members/me"), new AuthorityAuthorizationManager(roleHierarchy(), "USER")));
-        mappings.add(new RequestMatcherEntry<>(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager<Void>()));
-        return new RequestMatcherDelegatingAuthorizationManager(mappings);
+    public RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.with()
+                .role("ADMIN").implies("USER")
+                .build();
     }
 
     @Bean
